@@ -423,7 +423,169 @@
   </footer>
 
   <script>
+    // --- GESTION DU HEADER FIXE (Apparition/Masquage au scroll) ---
+    let lastScrollY = window.scrollY;
+    const header = document.getElementById('site-header');
+    const headerTrigger = document.getElementById('header-trigger');
 
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > lastScrollY && window.scrollY > 80) {
+        header.classList.add('nav-hidden');
+      } else {
+        header.classList.remove('nav-hidden');
+      }
+      lastScrollY = window.scrollY;
+    });
+
+    headerTrigger.addEventListener('mouseenter', () => {
+      header.classList.remove('nav-hidden');
+    });
+
+    // --- MENU BURGER ---
+    const menuWrapper = document.getElementById('menu-wrapper');
+    const burgerBtn = document.getElementById('burger-btn');
+
+    burgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = menuWrapper.classList.toggle('is-active');
+      burgerBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menuWrapper.contains(e.target)) {
+        menuWrapper.classList.remove('is-active');
+        burgerBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // --- GESTION DU CARROUSEL ET DU DIAPORAMA AUTOMATIQUE ---
+    const items = document.querySelectorAll('.thumb-item');
+    const mainImg = document.getElementById('main-product-img');
+    const titleEl = document.getElementById('product-title');
+    const descEl = document.getElementById('product-desc');
+    const priceEl = document.getElementById('product-price');
+    const ratingEl = document.getElementById('product-rating');
+    const playBtn = document.getElementById('play-btn');
+    const playText = document.getElementById('play-text');
+    const playIcon = document.getElementById('play-icon');
+
+    let currentIndex = 0;
+    let autoPlayInterval = null;
+    let isAutoPlay = true;
+
+    function updateProductDisplay(index) {
+      items.forEach(item => item.classList.remove('active'));
+      const target = items[index];
+      target.classList.add('active');
+
+      mainImg.src = target.dataset.img;
+      titleEl.textContent = target.dataset.title;
+      descEl.textContent = target.dataset.desc;
+      priceEl.textContent = target.dataset.price;
+      ratingEl.textContent = target.dataset.rating;
+
+      currentIndex = index;
+      extractDominantColor(mainImg);
+    }
+
+    function nextRandomProduct() {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * items.length);
+      } while (newIndex === currentIndex && items.length > 1);
+      updateProductDisplay(newIndex);
+    }
+
+    function startAutoPlay() {
+      isAutoPlay = true;
+    /*  playText.textContent = "⇄";*/
+      playIcon.textContent = "■";
+      if (!autoPlayInterval) {
+        autoPlayInterval = setInterval(nextRandomProduct, 8000);
+      }
+    }
+
+    function stopAutoPlay() {
+      isAutoPlay = false;
+    /*  playText.textContent = "⇄";*/
+      playIcon.textContent = "▶";
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = null;
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (isAutoPlay) {
+        stopAutoPlay();
+      } else {
+        nextRandomProduct();
+        startAutoPlay();
+      }
+    });
+
+    // Clic manuel sur une miniature
+    items.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        stopAutoPlay();
+        updateProductDisplay(index);
+      });
+    });
+
+    startAutoPlay();
+
+    // --- DÉFILEMENT DU CARROUSEL AU SURVOL DE LA SOURIS ---
+    const track = document.getElementById('carousel-track');
+    const zoneLeft = document.getElementById('zone-left');
+    const zoneRight = document.getElementById('zone-right');
+    let scrollInterval = null;
+
+    function startScrolling(direction) {
+      stopScrolling();
+      scrollInterval = setInterval(() => {
+        track.scrollLeft += direction * 64;
+      }, 64);
+    }
+
+    function stopScrolling() {
+      clearInterval(scrollInterval);
+    }
+
+    zoneLeft.addEventListener('mouseenter', () => startScrolling(-1));
+    zoneLeft.addEventListener('mouseleave', stopScrolling);
+    zoneRight.addEventListener('mouseenter', () => startScrolling(1));
+    zoneRight.addEventListener('mouseleave', stopScrolling);
+
+    // --- COULEUR DYNAMIQUE PAR CANVAS ---
+    function extractDominantColor(imgElement) {
+      if (!imgElement.complete) {
+        imgElement.onload = () => extractDominantColor(imgElement);
+        return;
+      }
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 50;
+      canvas.height = 50;
+
+      try {
+        ctx.drawImage(imgElement, 0, 0, 50, 50);
+        const imageData = ctx.getImageData(0, 0, 50, 50).data;
+        let r = 0, g = 0, b = 0, count = 0;
+
+        for (let i = 0; i < imageData.length; i += 16) {
+          r += imageData[i];
+          g += imageData[i + 1];
+          b += imageData[i + 2];
+          count++;
+        }
+
+        r = Math.floor(r / count);
+        g = Math.floor(g / count);
+        b = Math.floor(b / count);
+
+        document.documentElement.style.setProperty('--brand-color', `rgb(${r}, ${g}, ${b})`);
+      } catch (e) {
+        // En cas de blocage CORS sur l'image distante
+      }
+    }
   </script>
 </body>
 </html>
