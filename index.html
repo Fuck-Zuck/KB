@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Beauté (Caricature mode) • Accueil</title>
+
+  <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="favicon.ico">
+
+  <!-- Import Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --brand-color: #0d5c63;
+      --brand-light: #e6f2f3;
+      --text-color: #222222;
+      --bg-color: #f8f9fa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-top: 70px; /* Espace pour le header fixe */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.4s ease;
+      min-height: 100vh;
+    }
+
+    /* --- 1. BANNIÈRE / HEADER FIXE --- */
+    .site-header {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+      color: #2a200a;
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    /* Zone réactive tout en haut pour faire réapparaître le header au survol */
+    .header-trigger {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      z-index: 1001;
+    }
+
+    .site-header.nav-hidden {
+      transform: translateY(-100%);
+    }
+
+    .menu-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .burger-icon {
+      background: none;
+      border: none;
+      color: #2a200a;
+      font-size: 1.6rem;
+      cursor: pointer;
+      margin-right: 15px;
+      line-height: 1;
+    }
+
+    .site-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.1rem;
+      font-weight: 400;
+      margin-left: auto;
+      letter-spacing: 1px;
+    }
+
+    .drawer-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 250px;
+      background-color: white;
+      box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+      z-index: 100;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .drawer-nav ul { list-style: none; }
+    .drawer-nav li a {
+      display: block;
+      padding: 14px 20px;
+      color: var(--text-color);
+      text-decoration: none;
+      border-bottom: 1px solid #eee;
+      font-weight: 500;
+    }
+
+    .drawer-nav li a:hover {
+      background-color: var(--brand-light);
+      color: var(--brand-color);
+    }
+
+    @media (hover: hover) {
+      .menu-wrapper:hover .drawer-nav {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+    }
+
+    .menu-wrapper.is-active .drawer-nav {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* --- CONTENEUR PRINCIPAL --- */
+    .main-container {
+      max-width: 900px;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* --- 2. ENCART VIOLET : PHOTO 16/9 --- */
+    .hero-photo-card {
+      position: relative;
+      border: 3px solid #8e44ad;
+      border-radius: 12px;
+      background: #fff;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Bouton ON / Relancer */
+    .play-status-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+      z-index: 10;
+    }
+
+    .play-status-btn:hover {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    /* --- 3. ENCART ROUGE : CARROUSEL --- */
+    .carousel-wrapper {
+      border: 3px solid #e74c3c;
+      border-radius: 12px;
+      background: #fff;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none; /* Masque la barre sur Firefox */
+    }
+
+    .carousel-track::-webkit-scrollbar {
+      display: none; /* Masque la barre sur Chrome/Safari */
+    }
+
+    .thumb-item {
+      flex: 0 0 120px;
+      height: 120px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .thumb-item:hover {
+      transform: scale(1.03);
+    }
+
+    .thumb-item.active {
+      border-color: #8e44ad;
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Zones tactiles/survol pour défilement du carrousel */
+    .scroll-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.4);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: auto;
+    }
+
+    .carousel-wrapper:hover .scroll-zone {
+      opacity: 1;
+    }
+
+    .scroll-zone.left { left: 0; }
+    .scroll-zone.right { right: 0; }
+
+    /* --- 4. ENCART BLEU : PRÉSENTATION --- */
+    .description-card {
+      border: 3px solid #2980b9;
+      border-radius: 12px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .description-card h2 {
+      color: var(--brand-color);
+      margin-bottom: 10px;
+    }
+
+    /* --- 5. ENCART VERT : PRIX & ACTION --- */
+    .action-bar-card {
+      border: 3px solid #27ae60;
+      border-radius: 12px;
+      padding: 15px 20px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .price-tag {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--brand-color);
+    }
+
+    .rating {
+      color: #f39c12;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .btn-buy {
+      background-color: var(--brand-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-buy:hover { opacity: 0.9; }
+
+    /* --- PIED DE PAGE --- */
+    .site-footer {
+      width: 100%;
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      padding: 20px;
+    }
+
+    .site-footer a {
+      color: var(--brand-color);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-trigger" id="header-trigger"></div>
+
+  <!-- 1. BANDEAU DE NAVIGATION -->
+  <header class="site-header" id="site-header">
+    <div class="menu-wrapper" id="menu-wrapper">
+      <button class="burger-icon" id="burger-btn" aria-label="Menu" aria-expanded="false">⊛</button>
+      <nav class="drawer-nav" id="drawer-nav">
+        <ul>
+          <li><a href="#">Nos paniers et promotions</a></li>
+          <li><a href="#">Produits pour ELLE</a></li>
+          <li><a href="#">Produits pour LUI</a></li>
+          <li><a href="#">Nous contacter</a></li>
+        </ul>
+      </nav>
+    </div>
+    <span class="site-name">Site Beauté</span>
+  </header>
+
+  <main class="main-container">
+
+    <!-- 2. ENCART VIOLET : PHOTO 16/9 -->
+    <section class="hero-photo-card">
+      <button class="play-status-btn" id="play-btn">
+        <span id="play-icon"></span> <span id="play-text"></span>
+      </button>
+      <img id="main-product-img" src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/La_creme_au_crottin/IMG_5995_upscaled.jpeg" alt="Produit à la une" ><!-- crossorigin="anonymous" -->
+    </section>
+
+    <!-- 3. ENCART ROUGE : CARROUSEL DÉFILANT -->
+    <section class="carousel-wrapper" id="carousel-wrapper">
+      <div class="scroll-zone left" id="zone-left">◄</div>
+      <div class="carousel-track" id="carousel-track">
+        <!-- Produits représentés par leurs miniatures -->
+        <div class="thumb-item active" data-title="La crème au crottin • 50 ml ℮" data-desc="Découvrez notre dernière crème au crottin de biquettes. Des propriétés jalousement gardées secrètes enfin révélées !" data-price="249,99 €" data-rating="★★★★☆ 4.5/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/La_creme_au_crottin/IMG_5995_upscaled.jpeg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/La_creme_au_crottin/IMG_5994_Square.JPG" alt="Produit 1">
+        </div>
+        <div class="thumb-item" data-title="Soin visage régénérant à la bave de crapaud • 50 ml ℮" data-desc="Hydratation profonde et minéraux rares extraits directement de nos zones humides préservées. Pour celles qui attendent encore le prince charmant !" data-price="89,00 €" data-rating="★★★★☆ 4.0/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Soin_regenerant_visage_a_la_bave_de_crapaud/IMG_6072_2.jpg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Soin_regenerant_visage_a_la_bave_de_crapaud/IMG_6073_Square.jpg" alt="Produit 2">
+        </div>
+        <div class="thumb-item" data-title="Savon au lait d'ânesse • 100 g ℮" data-desc="Un concentré lacté pour donner un éclat rayonnant et naturel à votre teint au quotidien." data-price="45,00 €" data-rating="★★★★☆ 4.2/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Savon_au_lait_danesse/IMG_6069.jpg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Savon_au_lait_danesse/IMG_6068_Square.jpg" alt="Produit 3">
+        </div>
+        <div class="thumb-item" data-title="Savon au lait de femme • 100 g ℮" data-desc="Un sérum tonifiant naturel récolté à la main deux fois par jour !" data-price="120,50 €" data-rating="★★★★★ 4.9/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Savon au lait de femme/IMG_6071_3_upscaled.jpeg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Savon au lait de femme/IMG_6070_Square.jpg" alt="Produit 4">
+        </div>
+        <div class="thumb-item" data-title="Soin visage pour homme à la bave de crapaud • 50 ml ℮" data-desc="Nettoyage en profondeur pour purifier les pores et revitaliser les peaux fatiguées." data-price="19,90 €" data-rating="★★★★★ 4.7/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Soin visage à la bave de crapaud/IMG_6066.JPG">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Soin visage à la bave de crapaud/IMG_6065_Square.jpg" alt="Produit 5">
+        </div>
+
+        <div class="thumb-item active" data-title="La crème au crottin • 50 ml ℮" data-desc="Découvrez notre dernière crème au crottin de biquettes. Des propriétés jalousement gardées secrètes enfin révélées !" data-price="249,99 €" data-rating="★★★★☆ 4.5/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/La_creme_au_crottin/IMG_5995_upscaled.jpeg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/La_creme_au_crottin/IMG_5994_Square.JPG" alt="Produit 5">
+        </div>
+        <div class="thumb-item" data-title="Soin visage régénérant à la bave de crapaud • 50 ml ℮" data-desc="Hydratation profonde et minéraux rares extraits directement de nos zones humides préservées. Pour celles qui attendent encore le prince charmant !" data-price="89,00 €" data-rating="★★★★☆ 4.0/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Soin_regenerant_visage_a_la_bave_de_crapaud/IMG_6072_2.jpg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Soin_regenerant_visage_a_la_bave_de_crapaud/IMG_6073_Square.jpg" alt="Produit 2">
+        </div>
+        <div class="thumb-item" data-title="Savon au lait d'ânesse • 100 g ℮" data-desc="Un concentré lacté pour donner un éclat rayonnant et naturel à votre teint au quotidien." data-price="45,00 €" data-rating="★★★★☆ 4.2/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Savon_au_lait_danesse/IMG_6069.jpg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_ELLE/Savon_au_lait_danesse/IMG_6068_Square.jpg" alt="Produit 6">
+        </div>
+        <div class="thumb-item" data-title="Savon au lait de femme • 100 g ℮" data-desc="Un sérum tonifiant naturel récolté à la main deux fois par jour !" data-price="120,50 €" data-rating="★★★★★ 4.9/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Savon au lait de femme/IMG_6071_3_upscaled.jpeg">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Savon au lait de femme/IMG_6070_Square.jpg" alt="Produit 7">
+        </div>
+        <div class="thumb-item" data-title="Soin visage pour homme à la bave de crapaud • 50 ml ℮" data-desc="Nettoyage en profondeur pour purifier les pores et revitaliser les peaux fatiguées." data-price="19,90 €" data-rating="★★★★★ 4.7/5" data-img="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Soin visage à la bave de crapaud/IMG_6066.JPG">
+          <img src="/Users/XXXXXXX/Downloads/Sites/Atom/KB/Produits/Pour_LUI/Soin visage à la bave de crapaud/IMG_6065_Square.jpg" alt="Produit 8">
+        </div>
+
+      </div>
+      <div class="scroll-zone right" id="zone-right">►</div>
+    </section>
+
+    <!-- 4. ENCART BLEU : PRÉSENTATION DU PRODUIT SÉLECTIONNÉ -->
+    <section class="description-card">
+      <h2 id="product-title">La crème au crottin • 50 ml ℮</h2>
+      <p id="product-desc">
+        Toutes les bergères le savent, le véritable potentiel beauté offert par une chèvre n'est pas que dans son lait.
+        Découvrez notre dernière crème au crottin de biquettes.
+        Des propriétés jalousement gardées secrètes enfin révélées !
+      </p>
+    </section>
+
+    <!-- 5. ENCART VERT : PRIX, AVIS ET PANIER -->
+    <section class="action-bar-card">
+      <div class="price-tag" id="product-price">249,99 €</div>
+      <div class="rating" id="product-rating">★★★★☆ 4,5/5</div>
+      <button class="btn-buy">Ajouter au panier</button>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>© Copyright 2026 • Site Beauté • <a href="#">Mentions légales</a> • <a href="#">Contacts</a></p>
+  </footer>
+
+  <script>
+
+  </script>
+</body>
+</html>
